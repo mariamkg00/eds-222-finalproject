@@ -1,0 +1,74 @@
+---
+title: "Water Quality and Socioeconomic Status In LA County"
+format: html
+editor: visual
+---
+
+# Does Socioeconomic Status Have an Affect on Drinking Water Quality in Family Households in LA County?
+
+## Introduction and Significance
+
+## Methods
+
+```{r message = FALSE}
+# loading in needed libraries
+
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(stats)
+library(lubridate)
+library(janitor)
+library(sf)
+```
+
+```{r message=FALSE}
+
+# reading in the data 
+
+income_la <- read_csv('./data/Median_Income_and_AMI_(census_tract).csv') %>% 
+  rename('census_tract' = 'tract')
+
+# reading in water la data
+
+los_angeles <- read_csv('data/cal_enviro_4.csv') %>% 
+  clean_names() %>% 
+  filter(california_county == 'Los Angeles')
+
+
+# joining in the two datasets
+
+income_water_la <- left_join(los_angeles, income_la, by = "census_tract") %>% 
+  na.omit()
+
+
+# preliminary plotting
+lm(drinking_water ~ med_hh_income, data = income_water_la)
+
+summary(income_water_la$med_hh_income)
+
+# need units for drinking_water 
+      # sum of percentiles for drinking water index (includes lead, arsenic, TCM, Perchlorate)
+
+
+####**** Ideas : either stick with drinking water column (units unclear) or cardiovascular disease #######
+
+
+ggplot(income_water_la, aes(x = med_hh_income, y = cardiovascular_disease))+
+  geom_point()+
+  stat_smooth(method = 'lm', col = 'red')+
+  labs(x = 'Median Household Income (USD)',
+       y = 'Cardiovascular Disease-related ED visits per 10,000 people',
+       title = '     Median Income vs. Cardiovascular Disease')+
+  theme_classic()
+  
+  
+```
+
+## Results
+
+## Discussion
+
+## Conclusion
+
+## References
