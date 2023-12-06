@@ -4,7 +4,7 @@ format: html
 editor: visual
 ---
 
-# Does Socioeconomic Status Have an Affect on Drinking Water Quality in Family Households in LA County?
+# Does Household Income Have an Affect on Cardiovascular Health in LA County?
 
 ## Introduction and Significance
 
@@ -62,7 +62,72 @@ ggplot(income_water_la, aes(x = med_hh_income, y = cardiovascular_disease))+
        title = '     Median Income vs. Cardiovascular Disease')+
   theme_classic()
   
-  
+
+
+ggplot(data = income_water_la, aes(x = med_hh_income))+
+  geom_histogram(bins = 100, fill = 'lightblue')+
+  labs(x = 'Median Household Income (USD)',
+       y = 'Number of Census Tract Groups')
+```
+
+```{r}
+## hypothesis test construction
+# summary statistics for cardiovascular disease related ed visits
+
+cardio_stats <- income_water_la %>% 
+  group_by(ami_category) %>% 
+  summarise(mean = mean(cardiovascular_disease),
+            sd = sd(cardiovascular_disease))
+
+
+print(cardio_stats)
+```
+
+```{r}
+# constructing hypotheses
+
+
+```
+
+$$H_{0}: \mu_{cardiodiseaseinExtrLowInc} - \mu_{cardiodiseaseinModInc}  = 0$$ $$H_{A}:  \mu_{cardiodiseaseinExtrLowInc} - \mu_{cardiodiseaseinModInc} \neq 0$$
+
+$$SE = \sqrt{\frac{s_1^2}{n_1} + \frac{s^2_2}{n_2}}$$
+
+```{r}
+# computing a point estimate for both groups
+mu_cardio_low <- income_water_la %>% 
+  filter(ami_category == 'Extremely Low Income') %>% 
+  summarize(mean(cardiovascular_disease))
+
+mu_cardio_mod <- income_water_la %>% 
+  filter(ami_category == 'Above Moderate Income') %>% 
+  summarize(mean(cardiovascular_disease))
+
+
+point_est_cardio <- as.numeric(mu_cardio_mod - mu_cardio_low) # will use for z-score 
+
+# computing standard error
+
+n1 <- income_water_la %>% 
+  filter(ami_category == 'Extremely Low Income') %>% 
+  count()
+
+n2 <- income_water_la %>% 
+  filter(ami_category == 'Above Moderate Income') %>% 
+  count()
+
+s1 <- income_water_la %>% 
+  filter(ami_category == 'Extremely Low Income') %>% 
+  summarize(sd(cardiovascular_disease, na.rm = TRUE))
+
+s2<- income_water_la %>% 
+  filter(ami_category == 'Above Moderate Income') %>% 
+  summarize(sd(cardiovascular_disease, na.rm = TRUE))
+
+
+# computing standard error
+
+standard_error <-as.numeric(sqrt(s1^2/n1 + s2^2/n2))
 ```
 
 ## Results
