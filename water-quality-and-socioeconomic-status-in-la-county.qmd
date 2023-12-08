@@ -11,11 +11,28 @@ editor: visual
 
 ## Motivation
 
-According to the CDC, cardiovascular-related diseases are the leading cause of death in America. Although there are a number of factors that influence cardiovascular diseases, I chose to study the relationship between median income of census tracts in Los Angeles County and the number of cardiovascular disease-related Emergency Department (ED) visits. The CalEnviroScreen data set used in this study aims to highlight which communities within California are the most impacted by pollution by using census tract data that includes socioeconomic and demographic information which can help further encapsulate the larger issue at hand : pollution burden. In this research project, I will conduct a difference in means hypothesis test of two groups : Extremely Low Income and Above Moderate Income to see if there is a true difference in average cardiovascular disease-related Emergency Department (ED) visits.
+According to the CDC, cardiovascular-related diseases are the leading cause of death in America. Although there are a number of factors that influence cardiovascular diseases, I chose to study the relationship between median income of census tracts in Los Angeles County and the number of cardiovascular disease-related Emergency Department (ED) visits. In this research project, I will conduct a difference in means hypothesis test of two groups : Extremely Low Income and Above Moderate Income to see if there is a true difference in average cardiovascular disease-related Emergency Department (ED) visits.
 
-## Data 
+## Data
 
-CalEnviroScreen has recently celebrated their tenth anniversary since releasing their first version. Both California EPA and OEHHA (Office of Environmental Health Hazard Assessment) have collaboratively formulated this Environmental Justice screening tool as a means to help visualize impacts of pollution burden while accumultating
+CalEnviroScreen has recently celebrated their tenth anniversary since releasing their first version. The CalEnviroScreen data set used in this study aims to highlight which communities within California are the most impacted by pollution by using census tract data that includes socioeconomic and demographic information which can help further encapsulate the larger issue at hand : pollution burden. Both California EPA and OEHHA (Office of Environmental Health Hazard Assessment) have collaboratively formulated this Environmental Justice screening tool as a means to help visualize impacts of pollution burden while accumulating various demographic data accessible for readers.
+
+-   Variables Explored:
+
+    -   `PM2.5` - Annual mean PM 2.5 concentrations (micrograms per meter cubed)
+
+    -   `education`  - Percent of population over 25 with less than a high school education
+
+    -   `linguistic_isolation` - Percent limited English speaking households
+
+The second dataset used for this research project contains statistical information of median household income in LA County, which is then categorized into `ami categories` : Above Moderate Income, Moderate Income, Low Income, Very Low Income, and Extremely Low Income.
+
+My game plan for analysis includes :
+
+1.  Tidying both datasets
+2.  Joining datasets by census tract
+3.  Performing a linear regression
+4.  Conducting a hypothesis test for a difference in means of population (extremely low income AMI census tracts vs above moderate income AMI census tracts)
 
 ## Methods
 
@@ -69,11 +86,10 @@ summary(income_water_la$med_hh_income)
 Linear equation:
 
 $$
-cardiovasculardisease = \hat{\beta}_1income + \hat{\beta}_2toxicrelease + \hat{\beta}_3education + \hat{\beta}_4linguisticisolation
+cardiovasculardisease = \hat{\beta}_1income + \hat{\beta}_2pm2.5 + \hat{\beta}_3education + \hat{\beta}_4linguisticisolation
 $$
 
 ```{r}
-
 ggplot(income_water_la, aes(x = med_hh_income, y = cardiovascular_disease, col = education))+
   geom_point()+
   stat_smooth(method = 'lm', col = 'red')+
@@ -82,8 +98,6 @@ ggplot(income_water_la, aes(x = med_hh_income, y = cardiovascular_disease, col =
        title = '     Median Income vs. Cardiovascular Disease')+
   theme_classic()+
   stat_poly_eq()
-
-  
 ```
 
 ```{r}
@@ -120,19 +134,41 @@ cardio_stats <- income_water_la %>%
 print(cardio_stats)
 ```
 
+The `Extremely Low Income` AMI group has the most variance amongst AMI groups in this dataset.
+
+Using the `stargazer` package, I will conduct three different linear models to determine which added variables positively affect the adjusted $$R^2$$ value.
+
 ```{r warning = FALSE}
 # table of r squared values with different variables added 
 
-m3 <- lm(cardiovascular_disease ~ med_hh_income + tox_release + education + linguistic_isolation, data = income_water_la)
-m2 <- lm(cardiovascular_disease ~ med_hh_income + tox_release, data = income_water_la)
+m3 <- lm(cardiovascular_disease ~ med_hh_income + pm2_5 + education + linguistic_isolation, data = income_water_la)
+m2 <- lm(cardiovascular_disease ~  pm2_5, data = income_water_la)
 m1 <- lm(cardiovascular_disease ~ med_hh_income, data = income_water_la)
 
 
 stargazer(m1, m2, m3, type="text",
-          covariate.labels=c("Median Household Income","Toxic Air Release","Percentage of Adults over 25 without a High School Diploma", "Percent Limited English Speaking Households"))
+          covariate.labels=c("Median Household Income","Particulate Matter Concentration","Percentage of Adults over 25 without a High School Diploma", "Percent Limited English Speaking Households"))
 ```
 
 **Interpretation of stargazer table:**
+
+[Output for first equation `m1`:]{.underline}
+
+-   For every 1 unit increase in `Median Household Income`, the rate of cardiovascular disease related ED visits is expected to *decrease* by -0.0001 per 10,000.
+
+    -   To put this in perspective, a 10,000 increase in `Median Household Income` is expected to decrease the rate of cardiovascular disease related ED visits by 1 per 10,000.
+
+-   **R2** : 0.226 of all variability in the `cardiovascular_disease` output can be explained by `Median Household Income`.
+
+[Output for second equation `m2`]{.underline} :
+
+-   A one unit increase in annual particulate matter concentration `pm2_5` is expected to increase cardiovascular disease related ED visits by .254 per 10,000.
+
+-   **R2** : .002 of all variability in the `cardiovascular_disease` output can be explained by `pm2_5`.
+
+[Output for third equation `m3`]{.underline} :
+
+-   
 
 ```         
 ```
