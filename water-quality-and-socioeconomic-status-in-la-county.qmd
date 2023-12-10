@@ -251,7 +251,28 @@ Alternatively, this hypothesis test can be executed using a `t.test()`
 t.test(income_water_la$cardiovascular_disease[income_water_la$ami_category == 'Extremely Low Income'], income_water_la$cardiovascular_disease[income_water_la$ami_category == 'Above Moderate Income'])
 ```
 
+Based on the output by the `Welch Two Sample t-test`, I am 95% confident that (3.64, 5.97) captures the true value of the average difference of cardiovascular disease related ED visits between the two income groups.
+
+The p-value derived from the `Welch Two Sample t-test` is slightly higher than the p-value derived from the `pnorm` calculation, and this could be explained by the fact that the `Welch Two Sample t-test` assumes it is a t-distribution.
+
+##### Calculating a 95% confidence interval
+
+I'd like to construct a confidence interval apart from the derived interval in order to calculate a 5% probability that I am able to observe the point estimate. Calculating this confidence interval means that I will likely be 5% wrong that the difference between average cardiovascular related ED differences is between those two numbers.
+
+```{r}
+# 95% confidence interval 
+
+critical_val <- qnorm(0.025, lower.tail = FALSE)
+
+lower_ci <- round(point_est_cardio - critical_val*standard_error, 2)
+upper_ci <- round(point_est_cardio + critical_val*standard_error,2)
+
+print(paste0("There is a 95% probability that [",lower_ci, ",", upper_ci, "] contains the difference in cardiovascular related ED visits across above moderate income and extremely low income census tract groups. "))
+```
+
 ## Results
+
+Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can **reject the null** ,
 
 ## Conclusion
 
