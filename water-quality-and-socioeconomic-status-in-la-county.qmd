@@ -21,7 +21,7 @@ CalEnviroScreen has recently celebrated their tenth anniversary since releasing 
 
     -   `PM2.5` - Annual mean PM 2.5 concentrations (micrograms per meter cubed)
 
-    -   `education`  - Percent of population over 25 with less than a high school education
+    -   `education` - Percent of population over 25 with less than a high school education
 
     -   `linguistic_isolation` - Percent limited English speaking households
 
@@ -178,6 +178,7 @@ $$H_{0}: \mu_{cardiodiseaseinExtrLowInc} - \mu_{cardiodiseaseinModInc}  = 0$$ $$
 $$SE = \sqrt{\frac{s_1^2}{n_1} + \frac{s^2_2}{n_2}}$$
 
 ```{r}
+
 # computing a point estimate for both groups
 mu_cardio_low <- income_water_la %>% 
   filter(ami_category == 'Extremely Low Income') %>% 
@@ -188,7 +189,16 @@ mu_cardio_mod <- income_water_la %>%
   summarize(mean(cardiovascular_disease))
 
 
-point_est_cardio <- as.numeric(mu_cardio_mod - mu_cardio_low) # will use for z-score 
+point_est_cardio <- as.numeric(mu_cardio_low - mu_cardio_mod) # will use for z-score 
+
+print(point_est_cardio)
+
+
+```
+
+The point estimate value of `4.81` indicates that there is a difference between the two samples.
+
+```{r}
 
 # computing standard error
 
@@ -224,13 +234,24 @@ print(z)
 
 ```
 
-```{r}
+The z-score of `8.19` indicates that the observed difference in cardiovascular disease related ED visits between Above Moderate Income census tracts and Extremely Low Income census tract groups is 8.19 standard deviations **below** the null of zero difference.
 
+Now that I have a calculated z-score, I am then able to calculate the p-value. I decided to input `lower.tail = TRUE` because I am finding the probability that the lower tail of my confidence interval is no bigger than my z score of `-8.19`.
+
+\* In other words, I am using `lower.tail = TRUE` because we are trying to calculate the probability to the **left** of 0 .
+
+```{r}
+p_value <- pnorm(z,lower.tail = FALSE)
+p_value >= 0.05
+```
+
+Alternatively, this hypothesis test can be executed using a `t.test()`
+
+```{r}
+t.test(income_water_la$cardiovascular_disease[income_water_la$ami_category == 'Extremely Low Income'], income_water_la$cardiovascular_disease[income_water_la$ami_category == 'Above Moderate Income'])
 ```
 
 ## Results
-
-## Discussion
 
 ## Conclusion
 
