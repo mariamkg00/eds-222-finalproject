@@ -414,10 +414,10 @@ Note:                                                                           
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(z,<span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>p_value <span class="sc">&gt;=</span> <span class="fl">0.05</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p_value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] FALSE</code></pre>
+<pre><code>[1] 6.561525e-130</code></pre>
 </div>
 </div>
 <p>Alternatively, this hypothesis test can be executed using a <code>t.test()</code></p>
@@ -466,8 +466,9 @@ mean of x mean of y
 <section id="results-and-discussion" class="level2">
 <h2 class="anchored" data-anchor-id="results-and-discussion">Results and Discussion</h2>
 <p>Understanding the impact that socioeconomic status can have on a census tracts’ overall health is important in order to address the larger issue at hand : environmental racism. Through hypothesis testing and linear regression, I was able to conclude that cardiovascular health does depend on a variety of factors that are outside the scope of the data sets used, but I was able to point out the disparities between two vastly different income groups.</p>
-<p>Based on the <code>stargazer</code> results, adding more variables to the third linear model did increase the <code>R2</code> value, but not enough to conclude that there is a strong correlation as its value was less than 0.5. This is consistent with the research provided by the EPA stating that the occurrence of cardiovascular disease does rely on a number of factors. I decided to use income as the explanatory variable because ,generally speaking, households in LA County that are of low income tend to live closer to freeways or polluting facilities.</p>
-<p>Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can <strong>reject the null</strong> that there is no difference in heart attack related ED visits across above moderate income and very low income census tract groups.</p>
+<p>Based on the <code>stargazer</code> results, adding more variables to the third linear model did increase the <code>R2</code> value, but not enough to conclude that there is a strong correlation as its value was less than 0.5. The <code>p-value of 6.561525e-130</code> indicates that it is <strong>very unlikely</strong> to see the point estimate if the null hypothesis were true. In other words, there is a 5% chance that observing the point estimate of 5.98 would occur even if the null hypothesis were true.</p>
+<p>This is consistent with the research provided by the EPA stating that the occurrence of cardiovascular disease does rely on a number of factors. I decided to use income as the explanatory variable because ,generally speaking, households in LA County that are of low income tend to live closer to freeways or polluting facilities.</p>
+<p>Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can <strong>reject the null</strong> that there is no difference in heart attack related ED visits across above moderate income and very low income census tract groups. In conclusion, I found a statistically significant effect in which average income lowers the heart attack related ED rate.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
