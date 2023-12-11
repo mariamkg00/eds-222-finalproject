@@ -37,8 +37,8 @@ The second dataset used for this research project contains statistical informati
 
 My game plan for analysis includes :
 
-1.  Tidying both datasets
-2.  Joining datasets by census tract
+1.  Tidying both data sets
+2.  Joining data sets by census tract
 3.  Performing a linear regression
 4.  Conducting a hypothesis test for a difference in means of emergency department visits for heart attacks between very low income AMI census tracts vs above moderate income AMI census tracts.
 
@@ -95,9 +95,11 @@ summary(income_cardio)
 ```{r}
 count_income <- income_water_la %>% 
   group_by(ami_category) %>% 
-  count()
+  count() %>%  
+  rename(`Number of Census Groups` = n,
+         `AMI Category` = ami_category)
+knitr::kable(count_income)
 
-print(count_income)
 ```
 
 Of the 1,905 census tract groups with an associated AMI category :
@@ -118,14 +120,14 @@ ggplot(income_water_la, aes(x = med_hh_income, y = cardiovascular_disease, col =
 ```
 
 ```{r}
-
-ggplot(data = income_water_la, aes(x = med_hh_income))+
-  geom_histogram(bins = 100, fill = 'lightblue')+
-  labs(x = 'Median Household Income (USD)',
-       y = 'Number of Census Tract Groups',
-       title = 'Distribution of Median Income of LA County Census Tract Groups')+
-  theme_minimal()
-
+ggplot(income_water_la, aes(x = education, y = cardiovascular_disease))+
+  geom_point(color = '#CBC3E3')+
+  stat_smooth(method = 'lm', col = '#9F2B68')+
+  labs(x = '% of Adults > 25 with Less \nThan a High School Education',
+       y = 'Heart Attack ED visits per 10,000 people',
+       title = '     Education Level vs. Cardiovascular Disease')+
+  theme_classic()+
+  stat_poly_eq()
 ```
 
 ```{r}
@@ -250,7 +252,7 @@ Now that I have a calculated z-score, I am then able to calculate the p-value. I
 
 ```{r}
 p_value <- pnorm(z,lower.tail = FALSE)
-p_value >= 0.05
+print(p_value)
 ```
 
 Alternatively, this hypothesis test can be executed using a `t.test()`
@@ -282,9 +284,11 @@ print(paste0("There is a 95% probability that [",lower_ci, ",", upper_ci, "] con
 
 Understanding the impact that socioeconomic status can have on a census tracts' overall health is important in order to address the larger issue at hand : environmental racism. Through hypothesis testing and linear regression, I was able to conclude that cardiovascular health does depend on a variety of factors that are outside the scope of the data sets used, but I was able to point out the disparities between two vastly different income groups.
 
-Based on the `stargazer` results, adding more variables to the third linear model did increase the `R2` value, but not enough to conclude that there is a strong correlation as its value was less than 0.5. This is consistent with the research provided by the EPA stating that the occurrence of cardiovascular disease does rely on a number of factors. I decided to use income as the explanatory variable because ,generally speaking, households in LA County that are of low income tend to live closer to freeways or polluting facilities.
+Based on the `stargazer` results, adding more variables to the third linear model did increase the `R2` value, but not enough to conclude that there is a strong correlation as its value was less than 0.5. The `p-value of 6.561525e-130` indicates that it is **very unlikely** to see the point estimate if the null hypothesis were true. In other words, there is a 5% chance that observing the point estimate of 5.98 would occur even if the null hypothesis were true.
 
-Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can **reject the null** that there is no difference in heart attack related ED visits across above moderate income and very low income census tract groups.
+This is consistent with the research provided by the EPA stating that the occurrence of cardiovascular disease does rely on a number of factors. I decided to use income as the explanatory variable because ,generally speaking, households in LA County that are of low income tend to live closer to freeways or polluting facilities.
+
+Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can **reject the null** that there is no difference in heart attack related ED visits across above moderate income and very low income census tract groups. In conclusion, I found a statistically significant effect in which average income lowers the heart attack related ED rate.
 
 ## Conclusion
 
@@ -296,4 +300,29 @@ Li, Min, and Faxi Yuan. \"Historical Redlining and Resident Exposure to Covid-19
 
 \"Socioeconomic Factors.\" *Centers for Disease Control and Prevention*, 1 Sept. 2023, www.cdc.gov/dhdsp/health_equity/socioeconomic.htm#:\~:text=Socioeconomic%20status%20is%20a%20multidimensional,employment%20status%2C%20and%20other%20factors.&text=Low%20socioeconomic%20status%20is%20associated,from%20cardiovascular%20disease%20(CVD).
 
-GitHub Repository : https://github.com/mariamkg00/eds-222-finalproject
+### Supplemental Figures
+
+```{r}
+# qqplot
+ggplot(data = income_water_la)+
+  geom_qq(aes(sample = income_water_la$cardiovascular_disease), color = '#352C9E')+
+  geom_qq_line(aes(sample = income_water_la$cardiovascular_disease))+
+  theme(line = element_blank())+
+  labs(x = 'Normal Distribution Quantiles',
+       y = 'Sample Quantiles')+
+  theme_classic()
+```
+
+This `qqplot` of the cardiovascular disease variable tells me that there is a slight divergence from the normal distribution line in the lower quantiles, indicating that values in this quantile range are higher relative to a normal distribution. Moreover, this `qqplot` also tells me that it follows a normal distribution in the higher quantiles.
+
+```{r}
+
+ggplot(data = income_water_la, aes(x = med_hh_income))+
+  geom_histogram(bins = 100, fill = '#AAACE4')+
+  labs(x = 'Median Household Income (USD)',
+       y = 'Number of Census Tract Groups',
+       title = 'Distribution of Median Income of LA County Census Tract Groups')+
+  theme_minimal()
+```
+
+GitHub Repository :<https://github.com/mariamkg00/eds-222-finalproject>

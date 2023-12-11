@@ -104,7 +104,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Cardiovascular disease can be caused by a variety of factors. Some traditional risk factors include “male sex, older age, increased blood pressure, high cholesterol, low HDL (high density lipoprotein) and smoking”(epa.gov 2023). However, there are additional external factors that can exacerbate the likelihood of cardiovascular disease occurring. The EPA also states that people who live in areas with high air pollution are at an increased risk of PM2.5, along with people of low socioeconomic status.</p>
 <p>Los Angeles is historically known to have strategically cut off and outline communities with freeways, which has led to brown and black communities predominantly having respiratory issues and other chronic health issues. According to the National Institute of Health, “COVID-19 has been reported to disproportionately impact racial/ethnic minorities in the USA, both in terms of infections and deaths” (Li, Yuan 2021). This can be explained by the historic segregation of minority groups. Neighborhoods that are currently undergoing socioeconomic disadvantages were known to be redlined historically. The New York case study concluded that the disproportionate number of deaths among minority groups in America during the COVID-19 pandemic highlighted the historic health and race divide compared to the White majority.</p>
 <p>I chose this to research this topic because it is important to realize and note that environmental problems do not only include sea level rise or increased global temperature. Ongoing environmental problems combined with systemic racism can be detrimental to the survival of minority groups in America.</p>
-<p>Furthermore, I decided to incorporate other variables in this research topic in order to explore other socioeconomic and chemical variables that could be correlated with the number of heart attack related emergency department visits.</p>
+<p>Furthermore, I decided to incorporate other variables in this research topic in order to explore other socioeconomic and chemical variables that could be correlated with the number of heart attack related emergency department visits. Education is an important socioeconomic variable to research as it can influence employment and income levels. According to the CDC , ” individuals with lower levels of educational attainment are more likely to lack sociopolitical power and economic resources”(cdc.gov). Although not all socioeconomic factors are covered in this research project, education will play an important role in determining income level and housing status.</p>
 </section>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
@@ -120,8 +120,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The second dataset used for this research project contains statistical information of median household income in LA County, which is then categorized into <code>ami categories</code> : Above Moderate Income, Moderate Income, Low Income, Very Low Income, and Extremely Low Income.</p>
 <p>My game plan for analysis includes :</p>
 <ol type="1">
-<li>Tidying both datasets</li>
-<li>Joining datasets by census tract</li>
+<li>Tidying both data sets</li>
+<li>Joining data sets by census tract</li>
 <li>Performing a linear regression</li>
 <li>Conducting a hypothesis test for a difference in means of emergency department visits for heart attacks between very low income AMI census tracts vs above moderate income AMI census tracts.</li>
 </ol>
@@ -182,20 +182,42 @@ F-statistic:   557 on 1 and 1903 DF,  p-value: &lt; 2.2e-16</code></pre>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>count_income <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ami_category) <span class="sc">%&gt;%</span> </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(count_income)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>() <span class="sc">%&gt;%</span>  </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">Number of Census Groups</span><span class="st">`</span> <span class="ot">=</span> n,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>         <span class="st">`</span><span class="at">AMI Category</span><span class="st">`</span> <span class="ot">=</span> ami_category)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(count_income)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 5 × 2
-# Groups:   ami_category [5]
-  ami_category              n
-  &lt;chr&gt;                 &lt;int&gt;
-1 Above Moderate Income   419
-2 Extremely Low Income     94
-3 Low Income              740
-4 Moderate Income          19
-5 Very Low Income         633</code></pre>
+<div class="cell-output-display">
+<table class="table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">AMI Category</th>
+<th style="text-align: right;">Number of Census Groups</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Above Moderate Income</td>
+<td style="text-align: right;">419</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Extremely Low Income</td>
+<td style="text-align: right;">94</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Low Income</td>
+<td style="text-align: right;">740</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Moderate Income</td>
+<td style="text-align: right;">19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Very Low Income</td>
+<td style="text-align: right;">633</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <p>Of the 1,905 census tract groups with an associated AMI category :</p>
@@ -206,14 +228,14 @@ F-statistic:   557 on 1 and 1903 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(income_water_la, <span class="fu">aes</span>(<span class="at">x =</span> med_hh_income, <span class="at">y =</span> cardiovascular_disease, <span class="at">col =</span> education))<span class="sc">+</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">'lm'</span>, <span class="at">col =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Median Household Income (USD)'</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Heart Attack ED visits per 10,000 people'</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">'     Median Income vs. Cardiovascular Disease'</span>)<span class="sc">+</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_poly_eq</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(income_water_la, <span class="fu">aes</span>(<span class="at">x =</span> med_hh_income, <span class="at">y =</span> cardiovascular_disease, <span class="at">col =</span> education))<span class="sc">+</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">'lm'</span>, <span class="at">col =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Median Household Income (USD)'</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Heart Attack ED visits per 10,000 people'</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">'     Median Income vs. Cardiovascular Disease'</span>)<span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_poly_eq</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="water-quality-and-socioeconomic-status-in-la-county_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
@@ -222,13 +244,18 @@ F-statistic:   557 on 1 and 1903 DF,  p-value: &lt; 2.2e-16</code></pre>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> income_water_la, <span class="fu">aes</span>(<span class="at">x =</span> med_hh_income))<span class="sc">+</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="st">'lightblue'</span>)<span class="sc">+</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Median Household Income (USD)'</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Number of Census Tract Groups'</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">'Distribution of Median Income of LA County Census Tract Groups'</span>)<span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(income_water_la, <span class="fu">aes</span>(<span class="at">x =</span> education, <span class="at">y =</span> cardiovascular_disease))<span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">'#CBC3E3'</span>)<span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">'lm'</span>, <span class="at">col =</span> <span class="st">'#9F2B68'</span>)<span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'% of Adults &gt; 25 with Less </span><span class="sc">\n</span><span class="st">Than a High School Education'</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Heart Attack ED visits per 10,000 people'</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">'     Education Level vs. Cardiovascular Disease'</span>)<span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_poly_eq</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
 <div class="cell-output-display">
 <p><img src="water-quality-and-socioeconomic-status-in-la-county_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -438,15 +465,59 @@ mean of x mean of y
 </section>
 <section id="results-and-discussion" class="level2">
 <h2 class="anchored" data-anchor-id="results-and-discussion">Results and Discussion</h2>
-<p>Understanding the impact that socioeconomic status can have on a census tracts’ overall health is important in order to address the larger issue at hand : environmental racism. Through hypothesis testing and linear regression, I was able to conclude that cardiovascular health does depend on a variety of factors that are outside the scope of the datasets used, but I was able to point out the disparities between two vastly different income groups.</p>
-<p>Based on these results,</p>
-<p>Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can <strong>reject the null</strong> that there is no difference in cardiovascular related ED visits across above moderate income and extremely low income census tract groups.</p>
+<p>Understanding the impact that socioeconomic status can have on a census tracts’ overall health is important in order to address the larger issue at hand : environmental racism. Through hypothesis testing and linear regression, I was able to conclude that cardiovascular health does depend on a variety of factors that are outside the scope of the data sets used, but I was able to point out the disparities between two vastly different income groups.</p>
+<p>Based on the <code>stargazer</code> results, adding more variables to the third linear model did increase the <code>R2</code> value, but not enough to conclude that there is a strong correlation as its value was less than 0.5. This is consistent with the research provided by the EPA stating that the occurrence of cardiovascular disease does rely on a number of factors. I decided to use income as the explanatory variable because ,generally speaking, households in LA County that are of low income tend to live closer to freeways or polluting facilities.</p>
+<p>Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can <strong>reject the null</strong> that there is no difference in heart attack related ED visits across above moderate income and very low income census tract groups.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
+<p><em>Air Pollution and Cardiovascular Disease Basics | US EPA</em>, www.epa.gov/air-research/air-pollution-and-cardiovascular-disease-basics.</p>
+<p>Li, Min, and Faxi Yuan. "Historical Redlining and Resident Exposure to Covid-19: A Study of New York City." <em>Race and Social Problems</em>, U.S. National Library of Medicine, 2022, www.ncbi.nlm.nih.gov/pmc/articles/PMC8212581/#CR3.</p>
+<p>"Socioeconomic Factors." <em>Centers for Disease Control and Prevention</em>, 1 Sept.&nbsp;2023, www.cdc.gov/dhdsp/health_equity/socioeconomic.htm#:~:text=Socioeconomic%20status%20is%20a%20multidimensional,employment%20status%2C%20and%20other%20factors.&amp;text=Low%20socioeconomic%20status%20is%20associated,from%20cardiovascular%20disease%20(CVD).</p>
+<section id="supplemental-figures" class="level3">
+<h3 class="anchored" data-anchor-id="supplemental-figures">Supplemental Figures</h3>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># qqplot</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> income_water_la)<span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq</span>(<span class="fu">aes</span>(<span class="at">sample =</span> income_water_la<span class="sc">$</span>cardiovascular_disease), <span class="at">color =</span> <span class="st">'#352C9E'</span>)<span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq_line</span>(<span class="fu">aes</span>(<span class="at">sample =</span> income_water_la<span class="sc">$</span>cardiovascular_disease))<span class="sc">+</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">line =</span> <span class="fu">element_blank</span>())<span class="sc">+</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Normal Distribution Quantiles'</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Sample Quantiles'</span>)<span class="sc">+</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Use of `income_water_la$cardiovascular_disease` is discouraged.
+ℹ Use `cardiovascular_disease` instead.
+Use of `income_water_la$cardiovascular_disease` is discouraged.
+ℹ Use `cardiovascular_disease` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="water-quality-and-socioeconomic-status-in-la-county_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>This <code>qqplot</code> of the cardiovascular disease variable tells me that there is a slight divergence from the normal distribution line in the lower quantiles, indicating that values in this quantile range are higher relative to a normal distribution. Moreover, this <code>qqplot</code> also tells me that it follows a normal distribution in the higher quantiles.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> income_water_la, <span class="fu">aes</span>(<span class="at">x =</span> med_hh_income))<span class="sc">+</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="st">'#AAACE4'</span>)<span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Median Household Income (USD)'</span>,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Number of Census Tract Groups'</span>,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">'Distribution of Median Income of LA County Census Tract Groups'</span>)<span class="sc">+</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="water-quality-and-socioeconomic-status-in-la-county_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>GitHub Repository :<a href="https://github.com/mariamkg00/eds-222-finalproject" class="uri">https://github.com/mariamkg00/eds-222-finalproject</a></p>
+</section>
 </section>
 </section>
 
