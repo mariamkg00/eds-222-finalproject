@@ -96,11 +96,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="does-household-income-have-an-affect-on-cardiovascular-health-in-la-county" class="level1">
-<h1>Does Household Income Have an Affect on Cardiovascular Health in LA County?</h1>
+<section id="does-household-income-have-an-affect-on-cardiovascular-health" class="level1">
+<h1>Does Household Income Have an Affect on Cardiovascular Health?</h1>
 <section id="motivation" class="level2">
 <h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
-<p>According to the CDC, cardiovascular-related diseases are the leading cause of death in America. Although there are a number of factors that influence cardiovascular diseases, I chose to study the relationship between median income of census tracts in Los Angeles County and the number of cardiovascular disease-related Emergency Department (ED) visits. In this research project, I will conduct a difference in means hypothesis test of two groups : Extremely Low Income and Above Moderate Income to see if there is a true difference in average cardiovascular disease-related Emergency Department (ED) visits.</p>
+<p>According to the CDC, cardiovascular-related diseases are the leading cause of death in America. Although there are a number of factors that influence cardiovascular diseases, I chose to study the relationship between median income of census tracts in Los Angeles County and the number of cardiovascular disease-related Emergency Department (ED) visits. In this research project, I will conduct a difference in means hypothesis test of two groups : Extremely Low Income and Above Moderate Income to see if there is a true difference in heart attack-related Emergency Department (ED) visits.</p>
+<p>Cardiovascular disease can be caused by a variety of factors. Some traditional risk factors include “male sex, older age, increased blood pressure, high cholesterol, low HDL (high density lipoprotein) and smoking”(epa.gov 2023). However, there are additional external factors that can exacerbate the likelihood of cardiovascular disease occurring. The EPA also states that people who live in areas with high air pollution are at an increased risk of PM2.5, along with people of low socioeconomic status.</p>
+<p>Los Angeles is historically known to have strategically cut off and outline communities with freeways, which has led to brown and black communities predominantly having respiratory issues and other chronic health issues. According to the National Institute of Health, “COVID-19 has been reported to disproportionately impact racial/ethnic minorities in the USA, both in terms of infections and deaths” (Li, Yuan 2021). This can be explained by the historic segregation of minority groups. Neighborhoods that are currently undergoing socioeconomic disadvantages were known to be redlined historically. The New York case study concluded that the disproportionate number of deaths among minority groups in America during the COVID-19 pandemic highlighted the historic health and race divide compared to the White majority.</p>
+<p>I chose this to research this topic because it is important to realize and note that environmental problems do not only include sea level rise or increased global temperature. Ongoing environmental problems combined with systemic racism can be detrimental to the survival of minority groups in America.</p>
+<p>Furthermore, I decided to incorporate other variables in this research topic in order to explore other socioeconomic and chemical variables that could be correlated with the number of heart attack related emergency department visits.</p>
 </section>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
@@ -110,7 +114,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li><p><code>PM2.5</code> - Annual mean PM 2.5 concentrations (micrograms per meter cubed)</p></li>
 <li><p><code>education</code> - Percent of population over 25 with less than a high school education</p></li>
-<li><p><code>linguistic_isolation</code> - Percent limited English speaking households</p></li>
+<li><p><code>cardiovascular_disease</code> - Age-adjusted rate of emergency department visits for heart attacks per 10,000.</p></li>
 </ul></li>
 </ul>
 <p>The second dataset used for this research project contains statistical information of median household income in LA County, which is then categorized into <code>ami categories</code> : Above Moderate Income, Moderate Income, Low Income, Very Low Income, and Extremely Low Income.</p>
@@ -119,7 +123,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Tidying both datasets</li>
 <li>Joining datasets by census tract</li>
 <li>Performing a linear regression</li>
-<li>Conducting a hypothesis test for a difference in means of population (extremely low income AMI census tracts vs above moderate income AMI census tracts)</li>
+<li>Conducting a hypothesis test for a difference in means of emergency department visits for heart attacks between very low income AMI census tracts vs above moderate income AMI census tracts.</li>
 </ol>
 </section>
 <section id="methods" class="level2">
@@ -127,46 +131,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading in needed libraries</span></span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reading in the data </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stats)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(janitor)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stargazer)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpmisc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># reading in the data </span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>income_la <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'./data/Median_Income_and_AMI_(census_tract).csv'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">'census_tract'</span> <span class="ot">=</span> <span class="st">'tract'</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># reading in water la data</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>los_angeles <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/cal_enviro_4.csv'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(california_county <span class="sc">==</span> <span class="st">'Los Angeles'</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># joining in the two datasets</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>income_water_la <span class="ot">&lt;-</span> <span class="fu">left_join</span>(los_angeles, income_la, <span class="at">by =</span> <span class="st">"census_tract"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># preliminary plotting</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>income_cardio_tox_ed <span class="ot">&lt;-</span> <span class="fu">lm</span>(cardiovascular_disease <span class="sc">~</span> med_hh_income <span class="sc">+</span> tox_release <span class="sc">+</span>education, <span class="at">data =</span> income_water_la)</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>income_cardio <span class="ot">&lt;-</span> <span class="fu">lm</span>(cardiovascular_disease <span class="sc">~</span> med_hh_income, <span class="at">data =</span> income_water_la)</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(income_cardio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>income_la <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'./data/Median_Income_and_AMI_(census_tract).csv'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">'census_tract'</span> <span class="ot">=</span> <span class="st">'tract'</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># reading in water la data</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>los_angeles <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">'data/cal_enviro_4.csv'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">clean_names</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(california_county <span class="sc">==</span> <span class="st">'Los Angeles'</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># joining in the two datasets</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>income_water_la <span class="ot">&lt;-</span> <span class="fu">left_join</span>(los_angeles, income_la, <span class="at">by =</span> <span class="st">"census_tract"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># preliminary plotting</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>income_cardio_tox_ed <span class="ot">&lt;-</span> <span class="fu">lm</span>(cardiovascular_disease <span class="sc">~</span> med_hh_income <span class="sc">+</span> tox_release <span class="sc">+</span>education, <span class="at">data =</span> income_water_la)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>income_cardio <span class="ot">&lt;-</span> <span class="fu">lm</span>(cardiovascular_disease <span class="sc">~</span> med_hh_income, <span class="at">data =</span> income_water_la)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(income_cardio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -188,87 +176,76 @@ Residual standard error: 4.202 on 1903 degrees of freedom
 Multiple R-squared:  0.2264,    Adjusted R-squared:  0.226 
 F-statistic:   557 on 1 and 1903 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
+</div>
+<div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(income_water_la<span class="sc">$</span>med_hh_income)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>count_income <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ami_category) <span class="sc">%&gt;%</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(count_income)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  13630   50469   67548   75373   92008  250001 </code></pre>
+<pre><code># A tibble: 5 × 2
+# Groups:   ami_category [5]
+  ami_category              n
+  &lt;chr&gt;                 &lt;int&gt;
+1 Above Moderate Income   419
+2 Extremely Low Income     94
+3 Low Income              740
+4 Moderate Income          19
+5 Very Low Income         633</code></pre>
 </div>
 </div>
-<p>Linear equation:</p>
-<p><span class="math display">\[
-cardiovasculardisease = \hat{\beta}_1income + \hat{\beta}_2pm2.5 + \hat{\beta}_3education + \hat{\beta}_4linguisticisolation
-\]</span></p>
+<p>Of the 1,905 census tract groups with an associated AMI category :</p>
+<ul>
+<li><p>419 census tract groups fall under the <code>Above Moderate Income</code> category</p></li>
+<li><p>633 census tract groups fall under the <code>Very Low Income</code> category.</p></li>
+</ul>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(income_water_la, <span class="fu">aes</span>(<span class="at">x =</span> med_hh_income, <span class="at">y =</span> cardiovascular_disease, <span class="at">col =</span> education))<span class="sc">+</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">'lm'</span>, <span class="at">col =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Median Household Income (USD)'</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Cardiovascular Disease-related ED visits per 10,000 people'</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">'     Median Income vs. Cardiovascular Disease'</span>)<span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_poly_eq</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: The following aesthetics were dropped during statistical transformation: colour
-ℹ This can happen when ggplot fails to infer the correct grouping structure in
-  the data.
-ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
-  variable into a factor?</code></pre>
-</div>
-<div class="cell-output-display">
-<p><img src="water-quality-and-socioeconomic-status-in-la-county_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> income_water_la, <span class="fu">aes</span>(<span class="at">x =</span> med_hh_income))<span class="sc">+</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="st">'lightblue'</span>)<span class="sc">+</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Median Household Income (USD)'</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Number of Census Tract Groups'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(income_water_la, <span class="fu">aes</span>(<span class="at">x =</span> med_hh_income, <span class="at">y =</span> cardiovascular_disease, <span class="at">col =</span> education))<span class="sc">+</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_smooth</span>(<span class="at">method =</span> <span class="st">'lm'</span>, <span class="at">col =</span> <span class="st">'red'</span>)<span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Median Household Income (USD)'</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Heart Attack ED visits per 10,000 people'</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">'     Median Income vs. Cardiovascular Disease'</span>)<span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()<span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_poly_eq</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <p><img src="water-quality-and-socioeconomic-status-in-la-county_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># estimate for 10,000 increase in median income # add more variables and see how r squared changes;</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># holding all other variables constant </span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>cardio_cases <span class="ot">&lt;-</span> income_cardio<span class="sc">$</span>coefficients[<span class="st">"med_hh_income"</span>]<span class="sc">*</span> <span class="dv">10000</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(cardio_cases)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>med_hh_income 
-   -0.6556575 </code></pre>
 </div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># with a 10,000 increase in median income, cardiovascular disease rates go down by .26 per 10000 people. include formula before linear regression ; B1 is income, B2 is tox_release; B3 is education; hypothesis is whether B is 0 or not </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<pre><code></code></pre>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## hypothesis test construction</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># summary statistics for cardiovascular disease related ed visits</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>cardio_stats <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ami_category) <span class="sc">%&gt;%</span> </span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean =</span> <span class="fu">mean</span>(cardiovascular_disease),</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd =</span> <span class="fu">sd</span>(cardiovascular_disease))</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(cardio_stats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> income_water_la, <span class="fu">aes</span>(<span class="at">x =</span> med_hh_income))<span class="sc">+</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">100</span>, <span class="at">fill =</span> <span class="st">'lightblue'</span>)<span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Median Household Income (USD)'</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Number of Census Tract Groups'</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">'Distribution of Median Income of LA County Census Tract Groups'</span>)<span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="water-quality-and-socioeconomic-status-in-la-county_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## hypothesis test construction</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># summary statistics for cardiovascular disease related ed visits</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>cardio_stats <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(ami_category) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean =</span> <span class="fu">mean</span>(cardiovascular_disease),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd =</span> <span class="fu">sd</span>(cardiovascular_disease))</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(cardio_stats)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
@@ -282,51 +259,50 @@ cardiovasculardisease = \hat{\beta}_1income + \hat{\beta}_2pm2.5 + \hat{\beta}_3
 </div>
 </div>
 <p>The <code>Extremely Low Income</code> AMI group has the most variance amongst AMI groups in this dataset.</p>
-<p>Using the <code>stargazer</code> package, I will conduct three different linear models to determine which added variables positively affect the adjusted <span class="math display">\[R^2\]</span> value.</p>
+<p>However, the number of census tract groups in the <code>Extremely Low Income</code> AMI group is significantly lower than the number of census groups in the <code>Above Moderate Income</code>. In an effort to make this analysis as representative as possible, I will be using the data from census tract groups in the <code>Very Low Income</code> AMI category.</p>
+<p>Using the <code>stargazer</code> package, I will conduct three different linear models to determine which added variables positively affect the adjusted <strong>R2</strong> value.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># table of r squared values with different variables added </span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(cardiovascular_disease <span class="sc">~</span> med_hh_income <span class="sc">+</span> pm2_5 <span class="sc">+</span> education <span class="sc">+</span> linguistic_isolation, <span class="at">data =</span> income_water_la)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(cardiovascular_disease <span class="sc">~</span>  pm2_5, <span class="at">data =</span> income_water_la)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(cardiovascular_disease <span class="sc">~</span> med_hh_income, <span class="at">data =</span> income_water_la)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(m1, m2, m3, <span class="at">type=</span><span class="st">"text"</span>,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">covariate.labels=</span><span class="fu">c</span>(<span class="st">"Median Household Income"</span>,<span class="st">"Particulate Matter Concentration"</span>,<span class="st">"Percentage of Adults over 25 without a High School Diploma"</span>, <span class="st">"Percent Limited English Speaking Households"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># table of r squared values with different variables added </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(cardiovascular_disease <span class="sc">~</span> med_hh_income <span class="sc">+</span> pm2_5 <span class="sc">+</span> education, <span class="at">data =</span> income_water_la)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(cardiovascular_disease <span class="sc">~</span>  pm2_5, <span class="at">data =</span> income_water_la)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(cardiovascular_disease <span class="sc">~</span> med_hh_income, <span class="at">data =</span> income_water_la)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(m1, m2, m3, <span class="at">title =</span> <span class="st">'Regression Results'</span>,<span class="at">type=</span><span class="st">"text"</span>, <span class="at">dep.var.labels =</span> <span class="fu">c</span>(<span class="st">'Heart Attack Related ED Visits per 10,000'</span>),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">covariate.labels=</span><span class="fu">c</span>(<span class="st">"Median Household Income"</span>,<span class="st">"Particulate Matter Concentration"</span>,<span class="st">"% Population &gt; 25 with less than a High School Education"</span>),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">omit.stat =</span> <span class="fu">c</span>(<span class="st">'f'</span>),<span class="at">align =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
-====================================================================================================================================
-                                                                                      Dependent variable:                           
-                                                           -------------------------------------------------------------------------
-                                                                                    cardiovascular_disease                          
-                                                                      (1)                     (2)                     (3)           
-------------------------------------------------------------------------------------------------------------------------------------
-Median Household Income                                           -0.0001***                                      -0.00004***       
-                                                                   (0.00000)                                       (0.00000)        
-                                                                                                                                    
-Particulate Matter Concentration                                                            0.254*                  -0.152          
-                                                                                            (0.131)                 (0.106)         
-                                                                                                                                    
-Percentage of Adults over 25 without a High School Diploma                                                         0.160***         
-                                                                                                                    (0.008)         
-                                                                                                                                    
-Percent Limited English Speaking Households                                                                        -0.164***        
-                                                                                                                    (0.011)         
-                                                                                                                                    
-Constant                                                           19.189***               11.263***               17.991***        
-                                                                    (0.230)                 (1.538)                 (1.276)         
-                                                                                                                                    
-------------------------------------------------------------------------------------------------------------------------------------
-Observations                                                         1,905                   1,905                   1,905          
-R2                                                                   0.226                   0.002                   0.394          
-Adjusted R2                                                          0.226                   0.001                   0.393          
-Residual Std. Error                                            4.202 (df = 1903)       4.772 (df = 1903)       3.721 (df = 1900)    
-F Statistic                                                556.967*** (df = 1; 1903) 3.785* (df = 1; 1903) 309.097*** (df = 4; 1900)
-====================================================================================================================================
-Note:                                                                                                    *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+Regression Results
+==============================================================================================================
+                                                                          Dependent variable:                 
+                                                         -----------------------------------------------------
+                                                               Heart Attack Related ED Visits per 10,000      
+                                                                (1)               (2)               (3)       
+--------------------------------------------------------------------------------------------------------------
+Median Household Income                                     -0.0001***                          -0.00003***   
+                                                             (0.00000)                           (0.00000)    
+                                                                                                              
+Particulate Matter Concentration                                                0.254*           -0.465***    
+                                                                                (0.131)           (0.111)     
+                                                                                                              
+% Population &gt; 25 with less than a High School Education                                         0.119***     
+                                                                                                  (0.007)     
+                                                                                                              
+Constant                                                     19.189***         11.263***         19.129***    
+                                                              (0.230)           (1.538)           (1.351)     
+                                                                                                              
+--------------------------------------------------------------------------------------------------------------
+Observations                                                   1,905             1,905             1,905      
+R2                                                             0.226             0.002             0.319      
+Adjusted R2                                                    0.226             0.001             0.318      
+Residual Std. Error                                      4.202 (df = 1903) 4.772 (df = 1903) 3.945 (df = 1901)
+==============================================================================================================
+Note:                                                                              *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
 </div>
 </div>
 <p><strong>Interpretation of stargazer table:</strong></p>
@@ -334,92 +310,84 @@ Note:                                                                           
 <ul>
 <li><p>For every 1 unit increase in <code>Median Household Income</code>, the rate of cardiovascular disease related ED visits is expected to <em>decrease</em> by -0.0001 per 10,000.</p>
 <ul>
-<li>To put this in perspective, a 10,000 increase in <code>Median Household Income</code> is expected to decrease the rate of cardiovascular disease related ED visits by 1 per 10,000.</li>
+<li>To put this in perspective, a 10,000 increase in <code>Median Household Income</code> is expected to decrease the rate of ED visits for heart attacks by 1 per 10,000.</li>
 </ul></li>
 <li><p><strong>R2</strong> : 0.226 of all variability in the <code>cardiovascular_disease</code> output can be explained by <code>Median Household Income</code>.</p></li>
 </ul>
 <p><u>Output for second equation <code>m2</code></u> :</p>
 <ul>
-<li><p>A one unit increase in annual particulate matter concentration <code>pm2_5</code> is expected to increase cardiovascular disease related ED visits by .254 per 10,000.</p></li>
+<li><p>A one unit increase in annual particulate matter concentration <code>pm2_5</code> is expected to increase ED visits for heart attacks by .254 per 10,000.</p></li>
 <li><p><strong>R2</strong> : .002 of all variability in the <code>cardiovascular_disease</code> output can be explained by <code>pm2_5</code>.</p></li>
 </ul>
 <p><u>Output for third equation <code>m3</code></u> :</p>
 <ul>
-<li></li>
+<li><p>Holding <code>pm2_5</code> and <code>Median Household Income</code> constant, a one percent increase in population older than 25 with less than a high school education will lead to a 0.119 per 10,000 increase in ED visits for heart attacks.</p></li>
+<li><p>The adjusted R2 value is 0.319, meaning that , combined, <code>Median Household Income</code>, <code>Particulate Matter Concentration</code>, and <code>Education</code> explain 31.9% of variability in the rate of emergency department visits for heart attacks per 10,000.</p></li>
 </ul>
 <pre><code></code></pre>
-<p><span class="math display">\[H_{0}: \mu_{cardiodiseaseinExtrLowInc} - \mu_{cardiodiseaseinModInc}  = 0\]</span> <span class="math display">\[H_{A}:  \mu_{cardiodiseaseinExtrLowInc} - \mu_{cardiodiseaseinModInc} \neq 0\]</span></p>
+<p><span class="math display">\[H_{0}: \mu_{cardiodiseaseinVeryrLowInc} - \mu_{cardiodiseaseinModInc}  = 0\]</span> <span class="math display">\[H_{A}:  \mu_{cardiodiseaseinVeryLowInc} - \mu_{cardiodiseaseinModInc} \neq 0\]</span></p>
 <p><span class="math display">\[SE = \sqrt{\frac{s_1^2}{n_1} + \frac{s^2_2}{n_2}}\]</span></p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># computing a point estimate for both groups</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>mu_cardio_low <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Extremely Low Income'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">mean</span>(cardiovascular_disease))</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>mu_cardio_mod <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Above Moderate Income'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">mean</span>(cardiovascular_disease))</span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>point_est_cardio <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(mu_cardio_low <span class="sc">-</span> mu_cardio_mod) <span class="co"># will use for z-score </span></span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(point_est_cardio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># computing a point estimate for both groups</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>mu_cardio_low <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Very Low Income'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">mean</span>(cardiovascular_disease))</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>mu_cardio_mod <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Above Moderate Income'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">mean</span>(cardiovascular_disease))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>point_est_cardio <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(mu_cardio_low <span class="sc">-</span> mu_cardio_mod) <span class="co"># will use for z-score </span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(point_est_cardio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 4.80703</code></pre>
+<pre><code>[1] 5.975809</code></pre>
 </div>
 </div>
-<p>The point estimate value of <code>4.81</code> indicates that there is a difference between the two samples.</p>
+<p>The point estimate value of <code>5.98</code> indicates that there is a difference between the two samples.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># computing standard error</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>n1 <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Extremely Low Income'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>n2 <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Above Moderate Income'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>s1 <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Extremely Low Income'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">sd</span>(cardiovascular_disease, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>s2<span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Above Moderate Income'</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">sd</span>(cardiovascular_disease, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="co"># computing standard error</span></span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>standard_error <span class="ot">&lt;-</span><span class="fu">as.numeric</span>(<span class="fu">sqrt</span>(s1<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>n1 <span class="sc">+</span> s2<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>n2))</span>
-<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a><span class="co"># computing z-score</span></span>
-<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> (point_est_cardio <span class="sc">-</span> <span class="dv">0</span>)<span class="sc">/</span>standard_error</span>
-<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(z)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] 8.190407</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># z-score is around 8 standard deviations away from the mean  of 0 ?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># computing standard error</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>n1 <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Very Low Income'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>n2 <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Above Moderate Income'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>()</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>s1 <span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Very Low Income'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">sd</span>(cardiovascular_disease, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>s2<span class="ot">&lt;-</span> income_water_la <span class="sc">%&gt;%</span> </span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(ami_category <span class="sc">==</span> <span class="st">'Above Moderate Income'</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="fu">sd</span>(cardiovascular_disease, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># computing standard error</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>standard_error <span class="ot">&lt;-</span><span class="fu">as.numeric</span>(<span class="fu">sqrt</span>(s1<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>n1 <span class="sc">+</span> s2<span class="sc">^</span><span class="dv">2</span><span class="sc">/</span>n2))</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co"># computing z-score</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> (point_est_cardio <span class="sc">-</span> <span class="dv">0</span>)<span class="sc">/</span>standard_error</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>The z-score of <code>8.19</code> indicates that the observed difference in cardiovascular disease related ED visits between Above Moderate Income census tracts and Extremely Low Income census tract groups is 8.19 standard deviations <strong>below</strong> the null of zero difference.</p>
-<p>Now that I have a calculated z-score, I am then able to calculate the p-value. I decided to input <code>lower.tail = TRUE</code> because I am finding the probability that the lower tail of my confidence interval is no bigger than my z score of <code>-8.19</code>.</p>
+<p>The z-score of <code>24.22</code> indicates that the observed difference in cardiovascular disease related ED visits between Above Moderate Income census tracts and Very Low Income census tract groups is 24.2 standard deviations <strong>below</strong> the null of zero difference.</p>
+<p>Now that I have a calculated z-score, I am then able to calculate the p-value. I decided to input <code>lower.tail = TRUE</code> because I am finding the probability that the lower tail of my confidence interval is no bigger than my z score of <code>24.22</code>.</p>
 <p>* In other words, I am using <code>lower.tail = TRUE</code> because we are trying to calculate the probability to the <strong>left</strong> of 0 .</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(z,<span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>p_value <span class="sc">&gt;=</span> <span class="fl">0.05</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>p_value <span class="ot">&lt;-</span> <span class="fu">pnorm</span>(z,<span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>p_value <span class="sc">&gt;=</span> <span class="fl">0.05</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] FALSE</code></pre>
@@ -429,32 +397,50 @@ Note:                                                                           
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(income_water_la<span class="sc">$</span>cardiovascular_disease[income_water_la<span class="sc">$</span>ami_category <span class="sc">==</span> <span class="st">'Extremely Low Income'</span>], income_water_la<span class="sc">$</span>cardiovascular_disease[income_water_la<span class="sc">$</span>ami_category <span class="sc">==</span> <span class="st">'Above Moderate Income'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(income_water_la<span class="sc">$</span>cardiovascular_disease[income_water_la<span class="sc">$</span>ami_category <span class="sc">==</span> <span class="st">'Very Low Income'</span>], income_water_la<span class="sc">$</span>cardiovascular_disease[income_water_la<span class="sc">$</span>ami_category <span class="sc">==</span> <span class="st">'Above Moderate Income'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Welch Two Sample t-test
 
-data:  income_water_la$cardiovascular_disease[income_water_la$ami_category == "Extremely Low Income"] and income_water_la$cardiovascular_disease[income_water_la$ami_category == "Above Moderate Income"]
-t = 8.1904, df = 107.56, p-value = 5.835e-13
+data:  income_water_la$cardiovascular_disease[income_water_la$ami_category == "Very Low Income"] and income_water_la$cardiovascular_disease[income_water_la$ami_category == "Above Moderate Income"]
+t = 24.222, df = 1050, p-value &lt; 2.2e-16
 alternative hypothesis: true difference in means is not equal to 0
 95 percent confidence interval:
- 3.643619 5.970441
+ 5.491703 6.459914
 sample estimates:
 mean of x mean of y 
- 15.64106  10.83403 </code></pre>
+ 16.80984  10.83403 </code></pre>
 </div>
 </div>
-<p>Based on the output by the <code>Welch Two Sample t-test</code>, I am 95% confident that (3.64, 5.97) captures the true value of the average difference of cardiovascular disease related ED visits between the two income groups.</p>
-<p>The p-value derived from the <code>Welch Two Sample t-test</code> is slightly higher than the p-value derived from the <code>pnorm</code> calculation, and this could be explained by the fact that the <code>Welch Two Sample t-test</code> assumes it is a t-distribution.</p>
+<p>Based on the output by the <code>Welch Two Sample t-test</code>, I am 95% confident that (5.49, 6.46) captures the true value of the average difference of cardiovascular disease related ED visits between the two income groups.</p>
+<p>The p-value derived from the <code>Welch Two Sample t-test</code> is significantly higher than the p-value derived from the <code>pnorm</code> calculation, and this could be explained by the fact that the <code>Welch Two Sample t-test</code> assumes it is a t-distribution.</p>
 <section id="calculating-a-95-confidence-interval" class="level5">
 <h5 class="anchored" data-anchor-id="calculating-a-95-confidence-interval">Calculating a 95% confidence interval</h5>
-<p>I’d like to construct a confidence interval apart from the derived interval in order to calculate a 5% probability that I am able to observe the point estimate.</p>
+<p>I’d like to construct a confidence interval apart from the derived interval in order to calculate a 5% probability that I am able to observe the point estimate. Calculating this confidence interval means that I will likely be 5% wrong that the difference between ED visits for heart attacks is between this range.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 95% confidence interval </span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>critical_val <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="fl">0.025</span>, <span class="at">lower.tail =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>lower_ci <span class="ot">&lt;-</span> <span class="fu">round</span>(point_est_cardio <span class="sc">-</span> critical_val<span class="sc">*</span>standard_error, <span class="dv">2</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>upper_ci <span class="ot">&lt;-</span> <span class="fu">round</span>(point_est_cardio <span class="sc">+</span> critical_val<span class="sc">*</span>standard_error,<span class="dv">2</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste0</span>(<span class="st">"There is a 95% probability that ["</span>,lower_ci, <span class="st">","</span>, upper_ci, <span class="st">"] contains the difference in cardiovascular related ED visits across above moderate income and extremely low income census tract groups. "</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "There is a 95% probability that [5.49,6.46] contains the difference in cardiovascular related ED visits across above moderate income and extremely low income census tract groups. "</code></pre>
+</div>
+</div>
 </section>
 </section>
-<section id="results" class="level2">
-<h2 class="anchored" data-anchor-id="results">Results</h2>
-<p>Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can <strong>reject the null</strong> ,</p>
+<section id="results-and-discussion" class="level2">
+<h2 class="anchored" data-anchor-id="results-and-discussion">Results and Discussion</h2>
+<p>Understanding the impact that socioeconomic status can have on a census tracts’ overall health is important in order to address the larger issue at hand : environmental racism. Through hypothesis testing and linear regression, I was able to conclude that cardiovascular health does depend on a variety of factors that are outside the scope of the datasets used, but I was able to point out the disparities between two vastly different income groups.</p>
+<p>Based on these results,</p>
+<p>Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can <strong>reject the null</strong> that there is no difference in cardiovascular related ED visits across above moderate income and extremely low income census tract groups.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
