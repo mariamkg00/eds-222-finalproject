@@ -1,5 +1,5 @@
 ---
-title: "Water Quality and Socioeconomic Status In LA County"
+title: "Income and Cardiovascular Health "
 format:
   html:
     code-fold: true
@@ -13,7 +13,7 @@ editor: visual
 
 According to the CDC, cardiovascular-related diseases are the leading cause of death in America. Although there are a number of factors that influence cardiovascular diseases, I chose to study the relationship between median income of census tracts in Los Angeles County and the number of cardiovascular disease-related Emergency Department (ED) visits. In this research project, I will conduct a difference in means hypothesis test of two groups : Extremely Low Income and Above Moderate Income to see if there is a true difference in heart attack-related Emergency Department (ED) visits.
 
-Cardiovascular disease can be caused by a variety of factors. Some traditional risk factors include "male sex, older age, increased blood pressure, high cholesterol, low HDL (high density lipoprotein) and smoking "(epa.gov 2023). However, there are additional external factors that can exacerbate the likelihood of cardiovascular disease occurring. The EPA also states that people who live in areas with high air pollution are at an increased risk of PM2.5, along with people of low socioeconomic status.
+Cardiovascular disease can be caused by a variety of factors. Some traditional risk factors include "male sex, older age, increased blood pressure, high cholesterol, low HDL (high density lipoprotein) and smoking"(epa.gov 2023). However, there are additional external factors that can exacerbate the likelihood of cardiovascular disease occurring. The EPA also states that people who live in areas with high air pollution are at an increased risk of PM2.5, along with people of low socioeconomic status.
 
 Los Angeles is historically known to have strategically cut off and outline communities with freeways, which has led to brown and black communities predominantly having respiratory issues and other chronic health issues. According to the National Institute of Health, "COVID-19 has been reported to disproportionately impact racial/ethnic minorities in the USA, both in terms of infections and deaths" (Li, Yuan 2021). This can be explained by the historic segregation of minority groups. Neighborhoods that are currently undergoing socioeconomic disadvantages were known to be redlined historically. The New York case study concluded that the disproportionate number of deaths among minority groups in America during the COVID-19 pandemic highlighted the historic health and race divide compared to the White majority.
 
@@ -158,8 +158,9 @@ m1 <- lm(cardiovascular_disease ~ med_hh_income, data = income_water_la)
 
 
 stargazer(m1, m2, m3, title = 'Regression Results',type="text", dep.var.labels = c('Heart Attack Related ED Visits per 10,000'),
-          covariate.labels=c("Median Household Income","Particulate Matter Concentration","% Population > 25 with less than a High School Education"),
-          omit.stat = c('f'),align = TRUE)
+          covariate.labels=c("Median Household Income","PM 2.5 Concentration","% Population > 25 with less than a High School Education"),
+          omit.stat = c('f'),
+          font.size = 'small',align = TRUE)
 ```
 
 **Interpretation of stargazer table:**
@@ -244,7 +245,7 @@ z <- (point_est_cardio - 0)/standard_error
 
 ```
 
-The z-score of `24.22` indicates that the observed difference in cardiovascular disease related ED visits between Above Moderate Income census tracts and Very Low Income census tract groups is 24.2 standard deviations **below** the null of zero difference.
+The z-score of `24.22` indicates that the observed difference in cardiovascular disease related ED visits between Above Moderate Income census tracts and Very Low Income census tract groups is 24.2 standard deviations **above** the null of zero difference.
 
 Now that I have a calculated z-score, I am then able to calculate the p-value. I decided to input `lower.tail = TRUE` because I am finding the probability that the lower tail of my confidence interval is no bigger than my z score of `24.22`.
 
@@ -288,17 +289,21 @@ Based on the `stargazer` results, adding more variables to the third linear mode
 
 This is consistent with the research provided by the EPA stating that the occurrence of cardiovascular disease does rely on a number of factors. I decided to use income as the explanatory variable because ,generally speaking, households in LA County that are of low income tend to live closer to freeways or polluting facilities.
 
-Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can **reject the null** that there is no difference in heart attack related ED visits across above moderate income and very low income census tract groups. In conclusion, I found a statistically significant effect in which average income lowers the heart attack related ED rate.
+Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can **reject the null** that there is no difference in heart attack related ED visits across above moderate income and very low income census tract groups. In conclusion, I found a statistically significant effect in which average income lowers the heart attack related ED rate per 10,000 people.
+
+In the future, consistent units for certain variables like `drinking_water` would be helpful in running a deeper analysis. As the unit for this variable is the sum of percentiles of selected contaminants, it can be challenging to associate unit increases when percentiles come into play.
 
 ## Conclusion
+
+Although income level isn't the only explanatory variable for cardiovascular health, this study highlighted the other potential socioeconomic factors that can be affected by income. Further research on this topic needs to be conducted, and possibly done in other states to confirm whether or not the effect is consistent in other parts of the world. Moreover, this analysis does prove there to be a correlation and statistically significant significance between income and cardiovascular health.
 
 ## References
 
 *Air Pollution and Cardiovascular Disease Basics \| US EPA*, www.epa.gov/air-research/air-pollution-and-cardiovascular-disease-basics.
 
-Li, Min, and Faxi Yuan. \"Historical Redlining and Resident Exposure to Covid-19: A Study of New York City.\" *Race and Social Problems*, U.S. National Library of Medicine, 2022, www.ncbi.nlm.nih.gov/pmc/articles/PMC8212581/#CR3.
+Li, Min, and Faxi Yuan. "Historical Redlining and Resident Exposure to Covid-19: A Study of New York City." *Race and Social Problems*, U.S. National Library of Medicine, 2022, www.ncbi.nlm.nih.gov/pmc/articles/PMC8212581/#CR3.
 
-\"Socioeconomic Factors.\" *Centers for Disease Control and Prevention*, 1 Sept. 2023, www.cdc.gov/dhdsp/health_equity/socioeconomic.htm#:\~:text=Socioeconomic%20status%20is%20a%20multidimensional,employment%20status%2C%20and%20other%20factors.&text=Low%20socioeconomic%20status%20is%20associated,from%20cardiovascular%20disease%20(CVD).
+"Socioeconomic Factors." *Centers for Disease Control and Prevention*, 1 Sept. 2023, www.cdc.gov/dhdsp/health_equity/socioeconomic.htm#:\~:text=Socioeconomic%20status%20is%20a%20multidimensional,employment%20status%2C%20and%20other%20factors.&text=Low%20socioeconomic%20status%20is%20associated,from%20cardiovascular%20disease%20(CVD).
 
 ### Supplemental Figures
 
@@ -309,7 +314,8 @@ ggplot(data = income_water_la)+
   geom_qq_line(aes(sample = income_water_la$cardiovascular_disease))+
   theme(line = element_blank())+
   labs(x = 'Normal Distribution Quantiles',
-       y = 'Sample Quantiles')+
+       y = 'Sample Quantiles',
+       title = 'Heart Attack-Related ED Visits (per 10,000)')+
   theme_classic()
 ```
 

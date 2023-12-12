@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Water Quality and Socioeconomic Status In LA County</title>
+<title>Income and Cardiovascular Health</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -81,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Water Quality and Socioeconomic Status In LA County</h1>
+<h1 class="title">Income and Cardiovascular Health</h1>
 </div>
 
 
@@ -299,8 +299,9 @@ F-statistic:   557 on 1 and 1903 DF,  p-value: &lt; 2.2e-16</code></pre>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">stargazer</span>(m1, m2, m3, <span class="at">title =</span> <span class="st">'Regression Results'</span>,<span class="at">type=</span><span class="st">"text"</span>, <span class="at">dep.var.labels =</span> <span class="fu">c</span>(<span class="st">'Heart Attack Related ED Visits per 10,000'</span>),</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">covariate.labels=</span><span class="fu">c</span>(<span class="st">"Median Household Income"</span>,<span class="st">"Particulate Matter Concentration"</span>,<span class="st">"% Population &gt; 25 with less than a High School Education"</span>),</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">omit.stat =</span> <span class="fu">c</span>(<span class="st">'f'</span>),<span class="at">align =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">covariate.labels=</span><span class="fu">c</span>(<span class="st">"Median Household Income"</span>,<span class="st">"PM 2.5 Concentration"</span>,<span class="st">"% Population &gt; 25 with less than a High School Education"</span>),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">omit.stat =</span> <span class="fu">c</span>(<span class="st">'f'</span>),</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">font.size =</span> <span class="st">'small'</span>,<span class="at">align =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -314,7 +315,7 @@ Regression Results
 Median Household Income                                     -0.0001***                          -0.00003***   
                                                              (0.00000)                           (0.00000)    
                                                                                                               
-Particulate Matter Concentration                                                0.254*           -0.465***    
+PM 2.5 Concentration                                                            0.254*           -0.465***    
                                                                                 (0.131)           (0.111)     
                                                                                                               
 % Population &gt; 25 with less than a High School Education                                         0.119***     
@@ -407,7 +408,7 @@ Note:                                                                           
 <span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> (point_est_cardio <span class="sc">-</span> <span class="dv">0</span>)<span class="sc">/</span>standard_error</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>The z-score of <code>24.22</code> indicates that the observed difference in cardiovascular disease related ED visits between Above Moderate Income census tracts and Very Low Income census tract groups is 24.2 standard deviations <strong>below</strong> the null of zero difference.</p>
+<p>The z-score of <code>24.22</code> indicates that the observed difference in cardiovascular disease related ED visits between Above Moderate Income census tracts and Very Low Income census tract groups is 24.2 standard deviations <strong>above</strong> the null of zero difference.</p>
 <p>Now that I have a calculated z-score, I am then able to calculate the p-value. I decided to input <code>lower.tail = TRUE</code> because I am finding the probability that the lower tail of my confidence interval is no bigger than my z score of <code>24.22</code>.</p>
 <p>* In other words, I am using <code>lower.tail = TRUE</code> because we are trying to calculate the probability to the <strong>left</strong> of 0 .</p>
 <div class="cell">
@@ -468,16 +469,18 @@ mean of x mean of y
 <p>Understanding the impact that socioeconomic status can have on a census tracts’ overall health is important in order to address the larger issue at hand : environmental racism. Through hypothesis testing and linear regression, I was able to conclude that cardiovascular health does depend on a variety of factors that are outside the scope of the data sets used, but I was able to point out the disparities between two vastly different income groups.</p>
 <p>Based on the <code>stargazer</code> results, adding more variables to the third linear model did increase the <code>R2</code> value, but not enough to conclude that there is a strong correlation as its value was less than 0.5. The <code>p-value of 6.561525e-130</code> indicates that it is <strong>very unlikely</strong> to see the point estimate if the null hypothesis were true. In other words, there is a 5% chance that observing the point estimate of 5.98 would occur even if the null hypothesis were true.</p>
 <p>This is consistent with the research provided by the EPA stating that the occurrence of cardiovascular disease does rely on a number of factors. I decided to use income as the explanatory variable because ,generally speaking, households in LA County that are of low income tend to live closer to freeways or polluting facilities.</p>
-<p>Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can <strong>reject the null</strong> that there is no difference in heart attack related ED visits across above moderate income and very low income census tract groups. In conclusion, I found a statistically significant effect in which average income lowers the heart attack related ED rate.</p>
+<p>Both methods of conducting the hypothesis test of the difference in two means calculated a p-value of less than 0.05. Thus, we can <strong>reject the null</strong> that there is no difference in heart attack related ED visits across above moderate income and very low income census tract groups. In conclusion, I found a statistically significant effect in which average income lowers the heart attack related ED rate per 10,000 people.</p>
+<p>In the future, consistent units for certain variables like <code>drinking_water</code> would be helpful in running a deeper analysis. As the unit for this variable is the sum of percentiles of selected contaminants, it can be challenging to associate unit increases when percentiles come into play.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Although income level isn’t the only explanatory variable for cardiovascular health, this study highlighted the other potential socioeconomic factors that can be affected by income. Further research on this topic needs to be conducted, and possibly done in other states to confirm whether or not the effect is consistent in other parts of the world. Moreover, this analysis does prove there to be a correlation and statistically significant significance between income and cardiovascular health.</p>
 </section>
 <section id="references" class="level2">
 <h2 class="anchored" data-anchor-id="references">References</h2>
 <p><em>Air Pollution and Cardiovascular Disease Basics | US EPA</em>, www.epa.gov/air-research/air-pollution-and-cardiovascular-disease-basics.</p>
-<p>Li, Min, and Faxi Yuan. "Historical Redlining and Resident Exposure to Covid-19: A Study of New York City." <em>Race and Social Problems</em>, U.S. National Library of Medicine, 2022, www.ncbi.nlm.nih.gov/pmc/articles/PMC8212581/#CR3.</p>
-<p>"Socioeconomic Factors." <em>Centers for Disease Control and Prevention</em>, 1 Sept.&nbsp;2023, www.cdc.gov/dhdsp/health_equity/socioeconomic.htm#:~:text=Socioeconomic%20status%20is%20a%20multidimensional,employment%20status%2C%20and%20other%20factors.&amp;text=Low%20socioeconomic%20status%20is%20associated,from%20cardiovascular%20disease%20(CVD).</p>
+<p>Li, Min, and Faxi Yuan. “Historical Redlining and Resident Exposure to Covid-19: A Study of New York City.” <em>Race and Social Problems</em>, U.S. National Library of Medicine, 2022, www.ncbi.nlm.nih.gov/pmc/articles/PMC8212581/#CR3.</p>
+<p>“Socioeconomic Factors.” <em>Centers for Disease Control and Prevention</em>, 1 Sept.&nbsp;2023, www.cdc.gov/dhdsp/health_equity/socioeconomic.htm#:~:text=Socioeconomic%20status%20is%20a%20multidimensional,employment%20status%2C%20and%20other%20factors.&amp;text=Low%20socioeconomic%20status%20is%20associated,from%20cardiovascular%20disease%20(CVD).</p>
 <section id="supplemental-figures" class="level3">
 <h3 class="anchored" data-anchor-id="supplemental-figures">Supplemental Figures</h3>
 <div class="cell">
@@ -489,8 +492,9 @@ mean of x mean of y
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_qq_line</span>(<span class="fu">aes</span>(<span class="at">sample =</span> income_water_la<span class="sc">$</span>cardiovascular_disease))<span class="sc">+</span></span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">line =</span> <span class="fu">element_blank</span>())<span class="sc">+</span></span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">'Normal Distribution Quantiles'</span>,</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Sample Quantiles'</span>)<span class="sc">+</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">'Sample Quantiles'</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">'Heart Attack-Related ED Visits (per 10,000)'</span>)<span class="sc">+</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Use of `income_water_la$cardiovascular_disease` is discouraged.
